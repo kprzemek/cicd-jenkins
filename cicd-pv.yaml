@@ -1,0 +1,87 @@
+kind: Template
+apiVersion: v1
+metadata:
+  annotations:
+    description: CI-CD pv create template
+  name: cicd-pv
+objects:
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: gogs-postgres-data-pv
+  spec:
+    accessModes: 
+      - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    nfs:
+      path: /ose-nfs/volumeny/pv000
+      server: 10.11.20.20
+    persistentVolumeReclaimPolicy: Recycle
+    claimRef:
+      name: gogs-postgres-data
+      namespace: per-cicd
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: gogs-data-pv
+  spec:
+    accessModes: 
+      - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    nfs:
+      path: /ose-nfs/volumeny/pv001
+      server: 10.11.20.20
+    persistentVolumeReclaimPolicy: Recycle
+    claimRef:
+      name: gogs-data
+      namespace: per-cicd
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: sonardb-pv
+  spec:
+    accessModes: 
+      - ReadWriteOnce
+    capacity:
+      storage: 5Gi
+    nfs:
+      path: /ose-nfs/volumeny/pv002
+      server: 10.11.20.20
+    persistentVolumeReclaimPolicy: Recycle
+    claimRef:
+      name: sonardb
+      namespace: per-cicd
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: sonarqube-data-pv
+  spec:
+    accessModes: 
+      - ReadWriteOnce
+    capacity:
+      storage: 5Gi
+    nfs:
+      path: /ose-nfs/volumeny/pv003
+      server: 10.11.20.20
+    persistentVolumeReclaimPolicy: Recycle
+    claimRef:
+      name: sonarqube-data
+      namespace: per-cicd
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: nexus-pv
+  spec:
+    accessModes: 
+      - ReadWriteOnce
+    capacity:
+      storage: 2Gi
+    nfs:
+      path: /ose-nfs/volumeny/pv004
+      server: 10.11.20.20
+    persistentVolumeReclaimPolicy: Recycle
+    claimRef:
+      name: nexus-pv
+      namespace: per-cicd

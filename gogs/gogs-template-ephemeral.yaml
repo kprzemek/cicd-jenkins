@@ -251,7 +251,7 @@ objects:
     - name: "${GOGS_VERSION}"
       from:
         kind: DockerImage
-        name: docker.io/openshiftdemos/gogs:${GOGS_VERSION}
+        name: default-route-openshift-image-registry.apps.ose4.pk.test/cicd/gogs:${GOGS_VERSION}
       importPolicy: {}
       annotations:
         description: The Gogs git server docker image
@@ -323,11 +323,11 @@ parameters:
   value: 12MB
 - displayName: Database version (PostgreSQL)
   name: DATABASE_VERSION
-  value: "9.5"
+  value: "10"
 - name: GOGS_VERSION
   displayName: Gogs Version
   description: 'Version of the Gogs container image to be used (check the available version https://hub.docker.com/r/openshiftdemos/gogs/tags)'
-  value: "0.11.34"
+  value: "latest"
   required: true
 - name: INSTALL_LOCK
   displayName: Installation lock

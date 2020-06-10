@@ -251,7 +251,7 @@ objects:
     - name: "${GOGS_VERSION}"
       from:
         kind: DockerImage
-        name: default-route-openshift-image-registry.apps.ose4.pk.test/cicd/gogs:${GOGS_VERSION}
+        name: image-registry.openshift-image-registry.svc:5000/cicd/gogs:${GOGS_VERSION}
       importPolicy: {}
       annotations:
         description: The Gogs git server docker image

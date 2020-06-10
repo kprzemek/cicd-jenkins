@@ -25,6 +25,7 @@ objects:
   metadata:
     labels:
       app: ${SERVICE_NAME}
+      app.kubernetes.io/part-of: ${SERVICE_NAME}
     name: ${SERVICE_NAME}
   spec:
     replicas: 1
@@ -44,7 +45,7 @@ objects:
             command:
               - "/bin/bash"
               - "-c"
-              - "curl -o /tmp/nexus-functions -s https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/scripts/nexus-functions; source /tmp/nexus-functions; add_nexus3_redhat_repos admin admin123 http://${SERVICE_NAME}:8081"
+              - "curl -o /tmp/nexus-functions -s https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/nexus%2Fnexus-functions/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG; source /tmp/nexus-functions; add_nexus3_redhat_repos admin admin123 http://${SERVICE_NAME}:8081"
       type: Rolling
     template:
       metadata:
@@ -145,7 +146,7 @@ parameters:
 - displayName: Sonatype Nexus version
   name: NEXUS_VERSION
   required: true
-  value: 3.6.0
+  value: 3.13.0
 - description: Max memory allocated to the Nexus pod
   displayName: Max Memory
   name: MAX_MEMORY

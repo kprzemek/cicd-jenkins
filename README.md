@@ -5,6 +5,8 @@ ReadMe
 - Import Maven Agent 3.5
 - Budowanie nowych środowisk
 - Repozytoria:
-- lokalne w OSE
-- Red Hat-owe
-- GitLab-owe
+    - OSE lokalne
+    - Red Hat-owe
+    - GitLab-owe
+        - RAW dostęp do pliku/katalogu
+        - Docker registry w GitLab

@@ -1,0 +1,139 @@
+JENKINS:
+=======
+oc annotate sa jenkins serviceaccounts.openshift.io/oauth-redirectreference.jenkins='{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"jenkins"}}'
+serviceaccount/jenkins annotated
+[root@bastion openshift-cd-demo]# oc get sa jenkins -o json
+{
+    "apiVersion": "v1",
+    "imagePullSecrets": [
+        {
+            "name": "jenkins-dockercfg-lzjjc"
+        }
+    ],
+    "kind": "ServiceAccount",
+    "metadata": {
+        "annotations": {
+            "serviceaccounts.openshift.io/oauth-redirectreference.jenkins": "{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"jenkins\"}}"
+        },
+        "creationTimestamp": "2020-06-02T08:30:03Z",
+        "name": "jenkins",
+        "namespace": "cicd",
+        "resourceVersion": "502895",
+        "selfLink": "/api/v1/namespaces/cicd/serviceaccounts/jenkins",
+        "uid": "4ddfb242-1b2f-4294-8e61-1f327f4e05e7"
+    },
+    "secrets": [
+        {
+            "name": "jenkins-token-cjgdr"
+        },
+        {
+            "name": "jenkins-dockercfg-lzjjc"
+        }
+    ]
+}
+
+IMPORT strszej wersji MAVEN Agent 3.5:
+=======================================
+W OSE 4.4 jest nowy maven 4.0 z nową java 11. starsze aplikacje się nie budują bo potrzebują java 8. 
+Tą wersje ma maven 3.5. Trzeba do dodać np: lokalnie do projektu ci-cd:
+
+oc import-image openshift3/jenkins-agent-maven-35-rhel7 --from=registry.access.redhat.com/openshift3/jenkins-agent-maven-35-rhel7 --confirm
+
+NIE MA DEPLOY na STAGE:
+=======================
+Przy promocji próbuje zroibic rollout:latest ale nie sprawdzają, że jeszcze nic tam nie było nigdy (jak puszczamy pierwszy raz).
+Następne buildy po tej proceduże będą się promowały bez problemu.
+Trzeba stworzyć IS, TRIGGER i Route:
+
+oc new-app --name=tasks --image-stream=tasks:stage -n stage
+oc get all -n stage 
+oc set triggers dc -l app=tasks --containers=tasks --from-image=tasks:stage --manual -n stage
+
+KONFIGURACJA NOWYCH SRODOWISK:
+==============================
+Wykorzystac moza 2 pliki:
+1) cicd-template-PK.yaml - jenkins-slave/maven i Jboss są przerobione na RedHatowe.
+  Działa jako Ephemeral od strzału
+oc new-app -n jenkins-cicd -f cicd-template-PK.yaml --param DEV_PROJECT=jenkins-dev --param STAGE_PROJECT=jenkins-stage
+2) cicd-template-NoQUAY-PERSIST.yaml - jenkins i reszta jak wyżej, ale dodatkowo:
+ a) wywalony jest deploy QUAY 
+ b)(prawie) działa persystencja. Pojedyncze tamplatki działają w jednym pliku nie chcą...
+oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=false
+oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true
+3) cicd-clear.sh wywala wszystko z rojektu per-cicd
+4) PVC/PV trzeba ręcznie wywalić. PV kreuje plik cicd-pv.yaml
+
+Reszta normalnie jak w repo GIT:
+https://github.com/siamaksade/openshift-cd-demo
+
+LOGOWANIE DO redhat.io/itp:
+===========================
+RPM podman znajduje sie w repo-extras. Trzeba je wlaczyc:
+subscription-manager repos --enable "rhel-*-optional-rpms" --enable "rhel-*-extras-rpms"
+
+Najlepiej tam gdzie mamy podmana:
+
+podman login -u '5883743|PrzemyslawKuznickiLP' -p 'eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiJiNjRiMGMxOTU2MjI0ZDVjYjlhMWE4MTE4MGYwN2RmNiJ9.SHjoJbAK4USZozMg9NAnXOpvAGV9DnO3O1b0MxfqT2YYakIkTn0Lm34hR_4OcDSDX5FN9oXjZnMXapFRokj0yjCUH8QMPNKOln3EI-zb4w_0crww7UK-7FXGSNRsyQkaTv5qA2rhRzh4S_67Ew91GOvm4_dzLrvGDawDkASdnhv70v5ts3YC2aF-Rv-yVmANsLWpGyYJub2-outFcRM4FSDD-IL_X7-HnbvB9KMgQSNFbR5UtG9ugDwWhEmNcHImY2dbRKuHUXXvAv7NYoQl1u6SQmHzDFbRAmbSL127HIONJIM834VgC2uHdHg-0erS8CTLU5VxbGuowS7-Tm5fgAPHWoC6SzyXS4SK1dgHG4UwiQAsOrHb7b0YvJa3i9LA33fl0WX3gNWVruYaeIiJXyIBn-1i5M-UG0seryJRCdmF2ZIAbaGI8BNoLVMTK1wme1NZdrgaYhxNJOjFEZ8hqm3_9hPaP1T5CfHgf4KG_aQ7EXHnHayXdVEhrd4venshVIJIJQDnZ09hy-c8gv-TgbAtw3UT01Mims9Kk_2YMCWQV_4t3ShcSgMqgso1EgfgrNy8BjHZ4FEEF3oYGlMvaZVFH3ausfEsFSYp52lDZt473G8UyaAdS2O6MPKHO5tvkfTRsx-dqB-hRlI3Qu2s9aTtLS54uel6UYcLIYz2Hbc' registry.redhat.io
+
+i mozemy zasysac np:
+oc import-image rhel8/skopeo --from=registry.redhat.io/rhel8/skopeo --confirm
+
+Konfiguracja repo do przeszukiwan jest w pliku:
+/etc/containers/registries.conf
+dzieki temu mozna napisac:
+podman pull gogs/gogs
+a on przeszuka redhat.io i reszte az znajdzie w docker.io :-)
+
+Logowanie do lokalnego repo (na moim OSE):
+------------------------------------------
+https://docs.openshift.com/container-platform/4.4/registry/securing-exposing-registry.html
+Trzeba wystawic rute do rejestru by byl dostepy z zewnatrz:
+oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
+Powinna sie pokazac ruta: default-route-openshift-image-registry.apps.ose4.pk.test
+Mozna sie teraz zalogowac:
+[root@bastion POKAZ]# HOST=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
+[root@bastion POKAZ]# podman login -u $(oc whoami) -p $(oc whoami -t) --tls-verify=false $HOST [--tls-verify=false]
+Pozna cos push'nac:
+podman push default-route-openshift-image-registry.apps.ose4.pk.test/super-mario/mario-crossover:latest [--tls-verify=false]
+
+PERSYSTENCJA do CI-CD:
+======================
+Nie podnosi się postgreSQL :-( w gogs i sonarQ
+
+oc create -f cicd-pv.yaml
+oc process cicd-pv|oc create -f -
+oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=false
+
+GitLAB:
+=======
+Generujemy RAW do pliku by wiedzieć jaki jest URL.
+Sprawdzamy curl'em:
+curl 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2fcicd-jenkins/repository/files/cicd-pv.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG'
+lub 
+curl --header 'PRIVATE-TOKEN: dFEa27mG2DqzJXRo1CsG' https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2fcicd-jenkins/repository/files/cicd-pv.yaml/raw?ref=master
+
+Jesli bedzie cos w podkatalogu to:
+---------------------------------
+https://gitlab.com/api/v4/projects/REPO/repository/files/PLIK/raw?ref=master&private_token=xxx
+
+tam gdzie argument ma '/' zamieniasz go na '%2f'
+a więc:
+REPO = przemyslaw.kuznicki%2fcicd-jenkins
+PLIK = nexus%2fnexus3-template-ephemeral.yaml
+curl 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/nexus%2Fnexus3-template-ephemeral.yaml/raw?ref=masteren=dFEa27mG2DqzJXRo1CsG'
+
+Repo DOCKER w GitLAB:
+---------------------
+podman login registry.gitlab.com
+przemyslaw.kuznicki / A..@
+Tagi:
+podman tag docker.io/sonatype/nexus3:3.13.0 registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:3.13.0
+podman push registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:3.13.0
+
+UPRAWNIENIA do czytania obrazow z innego REPO:
+==============================================
+oc policy add-role-to-user system:image-puller system:serviceaccounts:per-cicd:default -n cicd
+
+CZYSZCZENIE PO TEMPLATCE:
+=========================
+oc process -f 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/gogs%2Fgogs-template-ephemeral.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG' --param HOSTNAME=gogs-per-cicd.apps.ose4.pk.test | oc delete -f -

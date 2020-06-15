@@ -64,7 +64,15 @@ oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=
 4) PVC/PV trzeba ręcznie wywalić. PV kreuje plik cicd-pv.yaml
 
 Reszta normalnie jak w repo GIT:
+--------------------------------
 https://github.com/siamaksade/openshift-cd-demo
+1) powołujemy nowe rojekty np: per-cicd, per-dev, per-stage
+2) nadajemy uprawnienia z per-cicd do pozostałych projektow:
+oc policy add-role-to-group edit system:serviceaccounts:per-cicd -n per-dev
+oc policy add-role-to-group edit system:serviceaccounts:per-cicd -n per-stage
+3) odpalamy template:
+oc process -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true|oc delete -f -
+
 
 LOGOWANIE DO redhat.io/itp:
 ===========================
@@ -77,6 +85,7 @@ podman login -u '5883743|PrzemyslawKuznickiLP' -p 'eyJhbGciOiJSUzUxMiJ9.eyJzdWIi
 
 i mozemy zasysac np:
 oc import-image rhel8/skopeo --from=registry.redhat.io/rhel8/skopeo --confirm
+UWAGA!!! skopeo z RH nie startuje!!! Od goscia z reo docker.io dziala.
 
 Konfiguracja repo do przeszukiwan jest w pliku:
 /etc/containers/registries.conf
@@ -130,6 +139,11 @@ Tagi:
 podman tag docker.io/sonatype/nexus3:3.13.0 registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:3.13.0
 podman push registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:3.13.0
 
+Dostep do pull-owania obrazow z GitLAB:
+---------------------------------------
+https://access.redhat.com/solutions/4236661
+
+
 UPRAWNIENIA do czytania obrazow z innego REPO:
 ==============================================
 oc policy add-role-to-user system:image-puller system:serviceaccounts:per-cicd:default -n cicd
@@ -137,3 +151,4 @@ oc policy add-role-to-user system:image-puller system:serviceaccounts:per-cicd:d
 CZYSZCZENIE PO TEMPLATCE:
 =========================
 oc process -f 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/gogs%2Fgogs-template-ephemeral.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG' --param HOSTNAME=gogs-per-cicd.apps.ose4.pk.test | oc delete -f -
+

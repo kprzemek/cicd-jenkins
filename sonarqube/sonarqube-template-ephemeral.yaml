@@ -16,7 +16,7 @@ objects:
         tags: sonarqube
       from:
         kind: DockerImage
-        name: docker.io/siamaksade/sonarqube:latest
+        name: image-registry.openshift-image-registry.svc:5000/cicd/sonarqube:latest
       importPolicy: {}
       name: latest
 - apiVersion: v1
@@ -45,6 +45,7 @@ objects:
     generation: 1
     labels:
       app: sonarqube
+      app.kubernetes.io/part-of: sonarqube
       template: postgresql-template
     name: sonardb
   spec:
@@ -135,7 +136,7 @@ objects:
           - postgresql
         from:
           kind: ImageStreamTag
-          name: 'postgresql:9.6'
+          name: 'postgresql:10'
           namespace: openshift
       type: ImageChange
     - type: ConfigChange
@@ -145,6 +146,7 @@ objects:
     generation: 1
     labels:
       app: sonarqube
+      app.kubernetes.io/part-of: sonarqube
     name: sonarqube
   spec:
     replicas: 1

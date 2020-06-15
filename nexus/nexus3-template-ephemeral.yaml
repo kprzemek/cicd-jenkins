@@ -18,7 +18,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: docker.io/sonatype/nexus3:${NEXUS_VERSION}
+        name: image-registry.openshift-image-registry.svc:5000/cicd/nexus:${NEXUS_VERSION}
       name: ${NEXUS_VERSION}
 - apiVersion: v1
   kind: DeploymentConfig
@@ -45,7 +45,7 @@ objects:
             command:
               - "/bin/bash"
               - "-c"
-              - "curl -o /tmp/nexus-functions -s https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/nexus%2Fnexus-functions/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG; source /tmp/nexus-functions; add_nexus3_redhat_repos admin admin123 http://${SERVICE_NAME}:8081"
+              - "curl -o /tmp/nexus-functions -s 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/nexus%2Fnexus-functions/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG'; source /tmp/nexus-functions; add_nexus3_redhat_repos admin admin123 http://${SERVICE_NAME}:8081"
       type: Rolling
     template:
       metadata:

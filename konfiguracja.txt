@@ -115,6 +115,8 @@ oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=
 
 GitLAB:
 =======
+Aktualny TOKEN do przegladania repo: private_token=dFEa27mG2DqzJXRo1CsG
+
 Generujemy RAW do pliku by wiedzieć jaki jest URL.
 Sprawdzamy curl'em:
 curl 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2fcicd-jenkins/repository/files/cicd-pv.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG'
@@ -129,7 +131,8 @@ tam gdzie argument ma '/' zamieniasz go na '%2f'
 a więc:
 REPO = przemyslaw.kuznicki%2fcicd-jenkins
 PLIK = nexus%2fnexus3-template-ephemeral.yaml
-curl 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/nexus%2Fnexus3-template-ephemeral.yaml/raw?ref=masteren=dFEa27mG2DqzJXRo1CsG'
+curl 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/nexus%2Fnexus-functions/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG'
+curl 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/nexus%2Fnexus3-template-ephemeral.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG'
 
 Repo DOCKER w GitLAB:
 ---------------------

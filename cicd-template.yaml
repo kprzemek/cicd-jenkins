@@ -289,7 +289,8 @@ objects:
             GOGS_HOSTNAME="gogs-$CICD_NAMESPACE.$HOSTNAME"
 
             if [ "${EPHEMERAL}" == "true" ] ; then
-              oc new-app -f http://10.11.20.20:8080/cicd/gogs-template-ephemeral.yaml \
+              # oc new-app -f http://10.11.20.20:8080/cicd/gogs-template-ephemeral.yaml \
+              oc new-app -f 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/gogs%2Fgogs-template-ephemeral.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG' \
                   --param=GOGS_VERSION=0.11.34 \
                   --param=HOSTNAME=$GOGS_HOSTNAME \
                   --param=SKIP_TLS_VERIFY=true
@@ -304,7 +305,8 @@ objects:
             sleep 5
 
             if [ "${EPHEMERAL}" == "true" ] ; then
-              oc new-app -f http://10.11.20.20:8080/cicd/sonarqube-template-ephemeral.yaml --param=SONARQUBE_MEMORY_LIMIT=2Gi
+              # oc new-app -f http://10.11.20.20:8080/cicd/sonarqube-template-ephemeral.yaml --param=SONARQUBE_MEMORY_LIMIT=2Gi
+              oc new-app -f 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/sonarqube%2Fsonarqube-template-ephemeral.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG' --param=SONARQUBE_MEMORY_LIMIT=2Gi
             else
               oc new-app -f http://10.11.20.20:8080/cicd/sonarqube-template-persistent.yaml --param=SONARQUBE_MEMORY_LIMIT=2Gi
             fi
@@ -313,7 +315,8 @@ objects:
             oc set resources dc/sonarqube --limits=cpu=1,memory=2Gi --requests=cpu=50m,memory=128Mi
 
             if [ "${EPHEMERAL}" == "true" ] ; then
-              oc new-app -f http://10.11.20.20:8080/cicd/nexus3-template-ephemeral.yaml --param=NEXUS_VERSION=3.13.0 --param=MAX_MEMORY=2Gi
+              # oc new-app -f http://10.11.20.20:8080/cicd/nexus3-template-ephemeral.yaml --param=NEXUS_VERSION=3.13.0 --param=MAX_MEMORY=2Gi
+              oc new-app -f 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/nexus%2Fnexus3-template-ephemeral.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG' --param=NEXUS_VERSION=3.13.0 --param=MAX_MEMORY=2Gi
             else
               oc new-app -f http://10.11.20.20:8080/cicd/nexus3-template-persistent.yaml --param=NEXUS_VERSION=3.13.0 --param=MAX_MEMORY=2Gi
             fi

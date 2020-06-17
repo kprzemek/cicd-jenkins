@@ -17,34 +17,34 @@ objects:
   metadata:
     annotations:
       description: Exposes the database server
-    name: ${APPLICATION_NAME}-postgresql
+    name: ${APPLICATION_NAME}-pgsql
   spec:
     ports:
     - name: postgresql
       port: 5432
       targetPort: 5432
     selector:
-      name: ${APPLICATION_NAME}-postgresql
+      name: ${APPLICATION_NAME}-pgsql
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
     annotations:
       description: Defines how to deploy the database
-    name: ${APPLICATION_NAME}-postgresql
+    name: ${APPLICATION_NAME}-pgsql
     labels:
       app: ${APPLICATION_NAME}
       app.kubernetes.io/part-of: ${APPLICATION_NAME}
   spec:
     replicas: 1
     selector:
-      name: ${APPLICATION_NAME}-postgresql
+      name: ${APPLICATION_NAME}-pgsql
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          name: ${APPLICATION_NAME}-postgresql
-        name: ${APPLICATION_NAME}-postgresql
+          name: ${APPLICATION_NAME}-pgsql
+        name: ${APPLICATION_NAME}-pgsql
       spec:
         serviceAccountName: ${APPLICATION_NAME}
         containers:
@@ -104,7 +104,7 @@ objects:
   metadata:
     annotations:
       description: The Gogs server's http port
-      service.alpha.openshift.io/dependencies: '[{"name":"${APPLICATION_NAME}-postgresql","namespace":"","kind":"Service"}]'
+      service.alpha.openshift.io/dependencies: '[{"name":"${APPLICATION_NAME}-pgsql","namespace":"","kind":"Service"}]'
     labels:
       app: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
@@ -272,7 +272,7 @@ objects:
 
       [database]
       DB_TYPE  = postgres
-      HOST     = ${APPLICATION_NAME}-postgresql:5432
+      HOST     = ${APPLICATION_NAME}-pgsql:5432
       NAME     = ${DATABASE_NAME}
       USER     = ${DATABASE_USER}
       PASSWD   = ${DATABASE_PASSWORD}

@@ -401,7 +401,7 @@ objects:
             fi
 
             oc label dc sonarqube "app.kubernetes.io/part-of"="sonarqube" --overwrite
-            oc label dc sonardb "app.kubernetes.io/part-of"="sonarqube" --overwrite
+            oc label dc sonar-pgsql "app.kubernetes.io/part-of"="sonarqube" --overwrite
             oc label dc jenkins "app.kubernetes.io/part-of"="jenkins" --overwrite
             oc label dc nexus "app.kubernetes.io/part-of"="nexus" --overwrite
             oc label dc gogs "app.kubernetes.io/part-of"="gogs" --overwrite

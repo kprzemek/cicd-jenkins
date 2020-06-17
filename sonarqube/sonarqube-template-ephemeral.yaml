@@ -29,7 +29,7 @@ objects:
     labels:
       app: sonarqube
       template: postgresql-template
-    name: sonardb
+    name: sonar-pgsql
   type: Opaque
 - apiVersion: v1
   stringData:
@@ -47,11 +47,11 @@ objects:
       app: sonarqube
       app.kubernetes.io/part-of: sonarqube
       template: postgresql-template
-    name: sonardb
+    name: sonar-pgsql
   spec:
     replicas: 1
     selector:
-      name: sonardb
+      name: sonar-pgsql
     strategy:
       activeDeadlineSeconds: 21600
       recreateParams:
@@ -61,7 +61,7 @@ objects:
     template:
       metadata:
         labels:
-          name: sonardb
+          name: sonar-pgsql
       spec:
         containers:
         - env:
@@ -69,17 +69,17 @@ objects:
             valueFrom:
               secretKeyRef:
                 key: database-user
-                name: sonardb
+                name: sonar-pgsql
           - name: POSTGRESQL_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-password
-                name: sonardb
+                name: sonar-pgsql
           - name: POSTGRESQL_DATABASE
             valueFrom:
               secretKeyRef:
                 key: database-name
-                name: sonardb
+                name: sonar-pgsql
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3
@@ -167,17 +167,17 @@ objects:
         containers:
         - env:
           - name: JDBC_URL
-            value: jdbc:postgresql://sonardb:5432/sonar
+            value: jdbc:postgresql://sonar-pgsql:5432/sonar
           - name: JDBC_USERNAME
             valueFrom:
               secretKeyRef:
                 key: database-user
-                name: sonardb
+                name: sonar-pgsql
           - name: JDBC_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-password
-                name: sonardb
+                name: sonar-pgsql
           - name: FORCE_AUTHENTICATION
             value: ${FORCE_AUTHENTICATION}
           - name: PROXY_HOST
@@ -302,7 +302,7 @@ objects:
     labels:
       app: sonarqube
       template: postgresql-template
-    name: sonardb
+    name: sonar-pgsql
   spec:
     ports:
     - name: postgresql
@@ -310,7 +310,7 @@ objects:
       protocol: TCP
       targetPort: 5432
     selector:
-      name: sonardb
+      name: sonar-pgsql
     sessionAffinity: None
     type: ClusterIP
   status:

@@ -7,5 +7,8 @@ Host gitlab.com
   User przemyslaw.kuznicki
   IdentityFile /root/.ssh/bastionKeyNoPass
 3) ustawiamy 600 na ~/.ssh/config
+  a) sprawdzamy: ssh -T git@gitlab.com
 4) cieszymy się dostępem po ssh:
    git clone git@gitlab.com:przemyslaw.kuznicki/cicd-jenkins.git
+
+

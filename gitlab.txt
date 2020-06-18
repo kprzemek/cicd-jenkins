@@ -11,4 +11,21 @@ Host gitlab.com
 4) cieszymy się dostępem po ssh:
    git clone git@gitlab.com:przemyslaw.kuznicki/cicd-jenkins.git
 
+ZMIANA SCIEZKI NA SSH:
+-----------------------
+W danym repo mozna sprawdzic w katalogu: .git/config
+cat .git/config 
+[core]
+        repositoryformatversion = 0
+        filemode = true
+        bare = false
+        logallrefupdates = true
+[remote "origin"]
+        url = git@gitlab.com:przemyslaw.kuznicki/cicd-jenkins.git
+        fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+        remote = origin
+        merge = refs/heads/master
 
+remote jest standardowo po HTTPS, a mozemy zmienic na SSH:
+git remote set-url origin git@gitlab.com:przemyslaw.kuznicki/cicd-jenkins.git

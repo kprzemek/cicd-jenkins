@@ -1,0 +1,11 @@
+Dostep SSH:
+-----------
+1) Dodajemy kluczyk publiczny do GitLab
+2) Dodajemy .ssh/config ze wskazaniem gitlaba:
+Host gitlab.com
+  HostName gitlab.com
+  User przemyslaw.kuznicki
+  IdentityFile /root/.ssh/bastionKeyNoPass
+3) ustawiamy 600 na ~/.ssh/config
+4) cieszymy się dostępem po ssh:
+   git clone git@gitlab.com:przemyslaw.kuznicki/cicd-jenkins.git

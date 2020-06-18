@@ -138,6 +138,11 @@ Repo DOCKER w GitLAB:
 ---------------------
 podman login registry.gitlab.com
 przemyslaw.kuznicki / A..@
+
+lub tokenem:
+podman login -u przemyslaw.kuznicki -p ZGNviZ7ivesfHMN83tYW registry.gitlab.com
+podman pull registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:3.13.0
+
 Tagi:
 podman tag docker.io/sonatype/nexus3:3.13.0 registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:3.13.0
 podman push registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:3.13.0

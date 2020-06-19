@@ -16,7 +16,7 @@ objects:
         tags: sonarqube
       from:
         kind: DockerImage
-        name: image-registry.openshift-image-registry.svc:5000/cicd/sonarqube:latest
+        name: registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/sonarqube:7.1.0
       importPolicy: {}
       name: latest
 - apiVersion: v1

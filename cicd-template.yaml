@@ -176,7 +176,7 @@ objects:
         <containers>
           <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
             <name>jnlp</name>
-            <image>image-registry.openshift-image-registry.svc:5000/cicd/jenkins-agent-maven-35-rhel7</image>
+            <image>registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/jenkins-agent-maven-35-rhel7:latest</image>
             <privileged>false</privileged>
             <alwaysPullImage>false</alwaysPullImage>
             <workingDir>/tmp</workingDir>

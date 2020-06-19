@@ -18,7 +18,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: image-registry.openshift-image-registry.svc:5000/cicd/nexus:${NEXUS_VERSION}
+        name: registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:${NEXUS_VERSION}
       name: ${NEXUS_VERSION}
 - apiVersion: v1
   kind: DeploymentConfig

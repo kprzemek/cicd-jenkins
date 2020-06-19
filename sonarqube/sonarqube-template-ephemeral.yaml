@@ -18,7 +18,7 @@ objects:
         kind: DockerImage
         name: registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/sonarqube:7.1.0
       importPolicy: {}
-      name: latest
+      name: 7.1.0
 - apiVersion: v1
   kind: Secret
   stringData:

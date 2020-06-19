@@ -311,7 +311,7 @@ objects:
               oc new-app -f http://10.11.20.20:8080/cicd/sonarqube-template-persistent.yaml --param=SONARQUBE_MEMORY_LIMIT=2Gi
             fi
 
-            oc set resources dc/sonardb --limits=cpu=200m,memory=512Mi --requests=cpu=50m,memory=128Mi
+            oc set resources dc/sonar-pgsql --limits=cpu=200m,memory=512Mi --requests=cpu=50m,memory=128Mi
             oc set resources dc/sonarqube --limits=cpu=1,memory=2Gi --requests=cpu=50m,memory=128Mi
 
             if [ "${EPHEMERAL}" == "true" ] ; then

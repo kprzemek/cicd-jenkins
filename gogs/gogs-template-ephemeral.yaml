@@ -253,7 +253,7 @@ objects:
     - name: "${GOGS_VERSION}"
       from:
         kind: DockerImage
-        name: registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/gogs:0.11.91
+        name: registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/gogs:${GOGS_VERSION}
       importPolicy: {}
       annotations:
         description: The Gogs git server docker image

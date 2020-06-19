@@ -275,7 +275,7 @@ objects:
         - sonarqube
         from:
           kind: ImageStreamTag
-          name: sonarqube:latest
+          name: sonarqube:7.1.0
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1

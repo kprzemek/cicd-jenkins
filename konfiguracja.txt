@@ -37,7 +37,13 @@ IMPORT strszej wersji MAVEN Agent 3.5:
 W OSE 4.4 jest nowy maven 4.0 z nową java 11. starsze aplikacje się nie budują bo potrzebują java 8. 
 Tą wersje ma maven 3.5. Trzeba do dodać np: lokalnie do projektu ci-cd:
 
+TRZEBA SIE ZALOGOWAC DO RH!!!
+Wszystko wykonac w rojekcie openshift, inaczej import zrobi sie do bierzacego projektu!!!!
+
 oc import-image openshift3/jenkins-agent-maven-35-rhel7 --from=registry.access.redhat.com/openshift3/jenkins-agent-maven-35-rhel7 --confirm
+UWAGA!!!
+  JDK 1.8 jest tylko w konetenerach do v.:v3.11.219-1. Pozniej dalej nazywa sie maven-35 ale zawiera TYLKO JDK11
+
 
 NIE MA DEPLOY na STAGE:
 =======================
@@ -52,25 +58,30 @@ oc set triggers dc -l app=tasks --containers=tasks --from-image=tasks:stage --ma
 KONFIGURACJA NOWYCH SRODOWISK:
 ==============================
 Wykorzystac moza 2 pliki:
-1) cicd-template-PK.yaml - jenkins-slave/maven i Jboss są przerobione na RedHatowe.
+1) cicd-template.yaml - jenkins-slave/maven i Jboss są przerobione na RedHatowe.
   Działa jako Ephemeral od strzału
-oc new-app -n jenkins-cicd -f cicd-template-PK.yaml --param DEV_PROJECT=jenkins-dev --param STAGE_PROJECT=jenkins-stage
+  oc new-app -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true
 2) cicd-template-NoQUAY-PERSIST.yaml - jenkins i reszta jak wyżej, ale dodatkowo:
  a) wywalony jest deploy QUAY 
  b)(prawie) działa persystencja. Pojedyncze tamplatki działają w jednym pliku nie chcą...
-oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=false
-oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true
+   oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=false
+   oc new-app -n per-cicd -f cicd-template-NoQUAY-PERSIST.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true
 3) cicd-clear.sh wywala wszystko z rojektu per-cicd
 4) PVC/PV trzeba ręcznie wywalić. PV kreuje plik cicd-pv.yaml
 
 Reszta normalnie jak w repo GIT:
 --------------------------------
+Trzeba miec zassane od RH: jenkins-agent-maven w wersji 3.x nie 4.x. Najlepiej do projektu openshift
+Trzeba miec zassane od RH: ose-cli. Najlepiej do projektu openshift. Oryginalnie tez jest cli w projekcie openshift i dziala (ale IS wskazuje na quay nie na RH)
+
 https://github.com/siamaksade/openshift-cd-demo
 1) powołujemy nowe rojekty np: per-cicd, per-dev, per-stage
 2) nadajemy uprawnienia z per-cicd do pozostałych projektow:
-oc policy add-role-to-group edit system:serviceaccounts:per-cicd -n per-dev
-oc policy add-role-to-group edit system:serviceaccounts:per-cicd -n per-stage
+   oc policy add-role-to-group edit system:serviceaccounts:per-cicd -n per-dev
+   oc policy add-role-to-group edit system:serviceaccounts:per-cicd -n per-stage
 3) odpalamy template:
+oc new-app -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true
+czyscimy
 oc process -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true|oc delete -f -
 
 
@@ -117,6 +128,10 @@ GitLAB:
 =======
 Aktualny TOKEN do przegladania repo: private_token=dFEa27mG2DqzJXRo1CsG
 
+KLONOWANIE reo z tokenem:
+---------
+https://oauth2:dFEa27mG2DqzJXRo1CsG@gitlab.com/przemyslaw.kuznicki/cicd-tasks-app.git
+
 Generujemy RAW do pliku by wiedzieć jaki jest URL.
 Sprawdzamy curl'em:
 curl 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2fcicd-jenkins/repository/files/cicd-pv.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG'
@@ -160,3 +175,5 @@ CZYSZCZENIE PO TEMPLATCE:
 =========================
 oc process -f 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jenkins/repository/files/gogs%2Fgogs-template-ephemeral.yaml/raw?ref=master&private_token=dFEa27mG2DqzJXRo1CsG' --param HOSTNAME=gogs-per-cicd.apps.ose4.pk.test | oc delete -f -
 
+oc new-app -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true
+oc process -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true|oc delete -f -

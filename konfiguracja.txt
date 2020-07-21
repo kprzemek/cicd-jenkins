@@ -1,3 +1,11 @@
+KOMENDA OC nie podpowiada TABem:
+--------------------------------
+instalując ją z TGZ nie generuje sie completion dla komendy OC. Trzeba zrobić to ręcznie:
+https://access.redhat.com/solutions/3189282
+i przelogować się lub:
+source /etc/bash_completion.d/oc_completion
+i działa :-D
+
 JENKINS:
 =======
 oc annotate sa jenkins serviceaccounts.openshift.io/oauth-redirectreference.jenkins='{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"jenkins"}}'

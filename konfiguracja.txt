@@ -185,3 +185,11 @@ oc process -f 'https://gitlab.com/api/v4/projects/przemyslaw.kuznicki%2Fcicd-jen
 
 oc new-app -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true
 oc process -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true|oc delete -f -
+
+SPRAWDZANIE API K8s-a
+=====================
+Jesli pojawi sie blad np:
+
+To musimy sprawdzic jaki jest poprawny wpis w API. Od K8s 1.16 nie ma juz extension/v1beta1 jest apps/v1
+./kubectl api-resources | grep deployment
+./kubectl api-resources | grep network

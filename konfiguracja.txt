@@ -92,6 +92,18 @@ oc new-app -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param
 czyscimy
 oc process -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true|oc delete -f -
 
+Przywracanie RH projektu w cicd:
+--------------------------------
+WYWALAMY wszystko z CICD: 
+oc delete all --all
+oc delete rolebinding default_admin -n cicd
+oc delete cm gogs-config jenkins-slaves -n cicd
+oc delete sa gogs jenkins -n  cicd
+oc delete secrets sonar-ldap-bind-dn sonar-pgsql -n cicd
+ODPALAMY od ZERA:
+oc new-app jenkins-ephemeral -n cicd 
+oc new-app -n cicd -f cicd-template-EPHEMERAL-withRH.yaml --param DEV_PROJECT=dev --param STAGE_PROJECT=stage --param EPHEMERAL=true
+
 
 LOGOWANIE DO redhat.io/itp:
 ===========================

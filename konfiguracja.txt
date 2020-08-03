@@ -185,6 +185,20 @@ podman push registry.gitlab.com/przemyslaw.kuznicki/cicd-jenkins/images/nexus3:3
 Dostep do pull-owania obrazow z GitLAB:
 ---------------------------------------
 https://access.redhat.com/solutions/4236661
+Nalezy utworzyc dwa secrety dla gitlab'a: gitlab-reg-secret   gitlab-secret
+$ oc create secret docker-registry gitlab-reg-secret \
+    --docker-server=registry.gitlab.com \
+    --docker-username=myuser \
+    --docker-password=mypasswd \
+    --docker-email=myemail@provider.com
+
+$ oc create secret docker-registry gitlab-secret \
+    --docker-server=gitlab.com \
+    --docker-username=myuser \
+    --docker-password=mypasswd \
+    --docker-email=myemail@provider.com
+
+$ oc secrets link default gitlab-reg-secret --for=pull
 
 
 UPRAWNIENIA do czytania obrazow z innego REPO:

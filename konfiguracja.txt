@@ -219,3 +219,8 @@ Jesli pojawi sie blad np:
 To musimy sprawdzic jaki jest poprawny wpis w API. Od K8s 1.16 nie ma juz extension/v1beta1 jest apps/v1
 ./kubectl api-resources | grep deployment
 ./kubectl api-resources | grep network
+
+PROBLEM z dostepen do LOGOW, EXEC itp
+=====================================
+https://access.redhat.com/solutions/4307511
+

@@ -104,6 +104,24 @@ ODPALAMY od ZERA:
 oc new-app jenkins-ephemeral -n cicd 
 oc new-app -n cicd -f cicd-template-EPHEMERAL-withRH.yaml --param DEV_PROJECT=dev --param STAGE_PROJECT=stage --param EPHEMERAL=true
 
+Przywracanie logowanie do GoGs:
+-------------------------------
+1) przywracanie logowania:
+kilka razy puścić (chyba ze od razu wskoczy 200 - sukces): 
+curl -o /tmp/curl.log -sL --post302 -w "%{http_code}" http://gogs-per-cicd.apps.ose4.pk.test/user/sign_up --form user_name=gogs --form password=gogs --form retype=gogs --form email=admin@gogs.com
+2) przywracanie repo:
+puszczamy az bedzie kod: 201 - repo sie sklonowalo:
+tworzymy plik data.json z namiarami na repo:
+cat <<EOF > /tmp/data.json
+            {
+              "clone_addr": "https://oauth2:dFEa27mG2DqzJXRo1CsG@gitlab.com/przemyslaw.kuznicki/cicd-tasks-app.git",
+              "uid": 1,
+              "repo_name": "openshift-tasks"
+            }
+            EOF
+puszczamy curl na te dane i naszego gogsa:
+curl -o /tmp/curl.log -sL -w "%{http_code}" -H "Content-Type: application/json" -u gogs:gogs -X POST http://gogs-per-cicd.apps.ose4.pk.test/api/v1/repos/migrate -d @/tmp/data.json
+
 
 LOGOWANIE DO redhat.io/itp:
 ===========================
@@ -126,6 +144,7 @@ a on przeszuka redhat.io i reszte az znajdzie w docker.io :-)
 
 Logowanie do lokalnego repo (na moim OSE):
 ------------------------------------------
+https://access.redhat.com/solutions/5177301
 https://docs.openshift.com/container-platform/4.4/registry/securing-exposing-registry.html
 Trzeba wystawic rute do rejestru by byl dostepy z zewnatrz:
 oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
@@ -133,6 +152,9 @@ Powinna sie pokazac ruta: default-route-openshift-image-registry.apps.ose4.pk.te
 Mozna sie teraz zalogowac:
 [root@bastion POKAZ]# HOST=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
 [root@bastion POKAZ]# podman login -u $(oc whoami) -p $(oc whoami -t) --tls-verify=false $HOST [--tls-verify=false]
+lub (haslo z TOKENU, nie haslo zwykle): 
+podman login -u przem https://default-route-openshift-image-registry.apps.ose4.pk.test --tls-verify=false
+
 Pozna cos push'nac:
 podman push default-route-openshift-image-registry.apps.ose4.pk.test/super-mario/mario-crossover:latest [--tls-verify=false]
 

@@ -95,6 +95,12 @@ oc new-app -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param
 czyscimy
 oc process -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true|oc delete -f -
 
+UWAGA!!!
+--------
+Moje obrazy sa z repo w GitLab. Trzeba dodać secrety by sie do nich dostać!!!
+Ops poniżej w punkcie: Dostep do pull-owania obrazow z GitLAB.
+Skladnia w pliku projektu: gitlab-secret.txt
+
 Przywracanie RH projektu w cicd:
 --------------------------------
 WYWALAMY wszystko z CICD: 

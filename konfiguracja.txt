@@ -81,12 +81,15 @@ Reszta normalnie jak w repo GIT:
 --------------------------------
 Trzeba miec zassane od RH: jenkins-agent-maven w wersji 3.x nie 4.x. Najlepiej do projektu openshift
 Trzeba miec zassane od RH: ose-cli. Najlepiej do projektu openshift. Oryginalnie tez jest cli w projekcie openshift i dziala (ale IS wskazuje na quay nie na RH)
+oc import-image openshift4/ose-cli --from=registry.redhat.io/openshift4/ose-cli --confirm
 
 https://github.com/siamaksade/openshift-cd-demo
 1) powołujemy nowe rojekty np: per-cicd, per-dev, per-stage
 2) nadajemy uprawnienia z per-cicd do pozostałych projektow:
    oc policy add-role-to-group edit system:serviceaccounts:per-cicd -n per-dev
    oc policy add-role-to-group edit system:serviceaccounts:per-cicd -n per-stage
+ a) uprawnienie edit dla JENKINSa w per-dev by mógł zrobić deploy aplikacji. Inaczej pipeline sie sypie:
+   oc policy add-role-to-user edit system:serviceaccounts:per-cicd:jenkins -n per-dev
 3) odpalamy template:
 oc new-app -n per-cicd -f cicd-template.yaml --param DEV_PROJECT=per-dev --param STAGE_PROJECT=per-stage --param EPHEMERAL=true
 czyscimy
@@ -208,6 +211,7 @@ Dostep do pull-owania obrazow z GitLAB:
 ---------------------------------------
 https://access.redhat.com/solutions/4236661
 Nalezy utworzyc dwa secrety dla gitlab'a: gitlab-reg-secret   gitlab-secret
+Haslo musi byc TOKENem z GitLab nie plaintext
 $ oc create secret docker-registry gitlab-reg-secret \
     --docker-server=registry.gitlab.com \
     --docker-username=myuser \

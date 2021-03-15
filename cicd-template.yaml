@@ -263,7 +263,7 @@ objects:
             
             # dev
             oc new-build --name=tasks --image-stream=jboss-eap70-openshift:1.7 --binary=true -n ${DEV_PROJECT}
-            oc new-app tasks:latest --allow-missing-images -n ${DEV_PROJECT}
+            oc new-app tasks:latest --allow-missing-images --as-deployment-config -n ${DEV_PROJECT}
             oc set triggers dc -l app=tasks --containers=tasks --from-image=tasks:latest --manual -n ${DEV_PROJECT}
 
             # dev project continue
@@ -274,7 +274,7 @@ objects:
             oc rollout cancel dc/tasks -n ${STAGE_PROJECT}
               
             # stage
-            oc new-app tasks:stage --allow-missing-images -n ${STAGE_PROJECT}
+            oc new-app tasks:stage --allow-missing-images --as-deployment-config -n ${STAGE_PROJECT}
             oc set triggers dc -l app=tasks --containers=tasks --from-image=tasks:stage --manual -n ${STAGE_PROJECT}
 
             # stage project continue

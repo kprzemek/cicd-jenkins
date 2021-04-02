@@ -5,6 +5,8 @@ https://access.redhat.com/solutions/3189282
 i przelogować się lub:
 source /etc/bash_completion.d/oc_completion
 i działa :-D
+lub:
+oc completion -h - pokaze co zrobic ;-)
 
 JENKINS:
 =======

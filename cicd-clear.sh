@@ -1,4 +1,4 @@
-# oc get rolebinding -n per-cicd
+# oc get rolebinding -n ep-cicd
 
 oc delete all --all -n ep-cicd
 oc delete pvc gogs-data gogs-postgres-data nexus-pv sonardb sonarqube-data -n ep-cicd

@@ -54,6 +54,10 @@ oc import-image openshift3/jenkins-agent-maven-35-rhel7 --from=registry.access.r
 UWAGA!!!
   JDK 1.8 jest tylko w konetenerach do v.:v3.11.219-1. Pozniej dalej nazywa sie maven-35 ale zawiera TYLKO JDK11
 
+oc import-image jboss-eap-7/eap74-openjdk8-openshift-rhel7:7.4.4-2.1650895313 --from=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7:7.4.4-2.1650895313 --confirm
+oc import-image openshift4/ose-cli --from=registry.redhat.io/openshift4/ose-cli --confirm
+
+
 
 NIE MA DEPLOY na STAGE:
 =======================

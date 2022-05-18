@@ -58,7 +58,6 @@ oc import-image jboss-eap-7/eap74-openjdk8-openshift-rhel7:7.4.4-2.1650895313 --
 oc import-image openshift4/ose-cli --from=registry.redhat.io/openshift4/ose-cli --confirm
 
 
-
 NIE MA DEPLOY na STAGE:
 =======================
 Przy promocji próbuje zroibic rollout:latest ale nie sprawdzają, że jeszcze nic tam nie było nigdy (jak puszczamy pierwszy raz).
@@ -68,6 +67,27 @@ Trzeba stworzyć IS, TRIGGER i Route:
 oc new-app --name=tasks --image-stream=tasks:stage -n stage
 oc get all -n stage 
 oc set triggers dc -l app=tasks --containers=tasks --from-image=tasks:stage --manual -n stage
+
+
+UWAGA!!!
+Przy instalacji OCP 4.8 nie ma domyslenie is i template w openshift. Trzeba samemu wszystko dociagnac!
+oc import-image java:11 --from=registry.redhat.io/openjdk/openjdk-11-rhel7:1.12-1.1651478821 --confirm
+oc import-image rhel8/postgresql:latest --from=registry.redhat.io/rhel8/postgresql-10:1-182 --confirm
+oc import-image jenkins:2 --from=registry.redhat.io/openshift4/ose-jenkins:v4.10.0-202205052127.p0.g1ab318b.assembly.stream --confirm
+oc import-image jboss-eap-7/jboss-eap7-openshift:7.4 --from=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7:7.4.4-2.1651478824 --confirm
+
+Na potrzeby Jenkis Ephemeral:
+-----------------------------
+oc import-image jenkins:2 --from=registry.redhat.io/openshift4/ose-jenkins:v4.10.0-202205052127.p0.g1ab318b.assembly.stream --confirm
+
+Na potrzeby build'a w projekcie DEV:
+------------------------------------
+Jak nie ma is w projekcie openshift, to nie tworzą się obiekty w dev i stage.
+To sa kolejne kroki w cicd-template.yaml
+
+oc import-image jboss-eap-7/jboss-eap7-openshift:7.4 --from=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7:7.4.4-2.1651478824 --confirm
+oc new-build --name=tasks --image-stream=jboss-eap7-openshift:7.4 --allow-missing-images --binary=true -n ep-dev
+
 
 KONFIGURACJA NOWYCH SRODOWISK:
 ==============================
